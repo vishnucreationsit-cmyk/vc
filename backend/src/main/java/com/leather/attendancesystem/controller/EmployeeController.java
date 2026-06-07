@@ -90,7 +90,7 @@ public class EmployeeController {
 
                 <div style="background-color: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 4px solid #8b5e34; margin-bottom: 20px;">
                     <h3 style="margin-top: 0; color: #8b5e34;">Login Credentials</h3>
-                    <p><strong>Portal URL:</strong> <a href="http://localhost:5173">http://localhost:5173</a></p>
+                    <p><strong>Portal URL:</strong> <a href="https://www.vishnucreations.shop/login">https://www.vishnucreations.shop/login</a></p>
                     <p><strong>Employee ID (Username):</strong> %s</p>
                     <p><strong>Temporary Password:</strong> %s</p>
                 </div>
