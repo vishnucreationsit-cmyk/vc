@@ -19,12 +19,7 @@ const Login = () => {
   const [adminUserId, setAdminUserId] = useState(null);
   const [successMsg, setSuccessMsg] = useState('');
   
-  // Visitor Modal State
-  const [showVisitorModal, setShowVisitorModal] = useState(false);
-  const [visitorName, setVisitorName] = useState('');
-  const [visitorMobile, setVisitorMobile] = useState('');
-  const [visitorLoading, setVisitorLoading] = useState(false);
-  const [visitorError, setVisitorError] = useState('');
+
   
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -75,24 +70,6 @@ const Login = () => {
     }
   };
 
-  const handleVisitorSubmit = async (e) => {
-    e.preventDefault();
-    if (!visitorName || !visitorMobile) return;
-    try {
-      setVisitorLoading(true);
-      setVisitorError('');
-      await axios.post(import.meta.env.VITE_API_URL + '/api/visitors', {
-        name: visitorName,
-        mobileNumber: visitorMobile
-      });
-      setShowVisitorModal(false);
-      navigate('/');
-    } catch (err) {
-      setVisitorError('Failed to register visitor. Please try again.');
-    } finally {
-      setVisitorLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex bg-white font-inter">
@@ -255,80 +232,8 @@ const Login = () => {
             </button>
           </form>
 
-          <div className="mt-12 pt-8 border-t border-gray-200/80 text-center">
-            <p className="text-gray-500 text-sm font-medium">Are you a visitor?</p>
-            <button
-              type="button"
-              onClick={() => setShowVisitorModal(true)}
-              className="mt-3 flex items-center justify-center gap-2 w-full py-3.5 border-2 border-gray-200 rounded-xl text-gray-700 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all"
-            >
-              <Globe size={18} /> Go to Public Portal
-            </button>
-          </div>
         </div>
       </div>
-
-      {/* Visitor Registration Modal */}
-      <AnimatePresence>
-        {showVisitorModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
-            >
-              <div className="flex justify-between items-center p-6 border-b border-gray-100">
-                <h3 className="text-xl font-bold text-gray-900">Visitor Registration</h3>
-                <button onClick={() => setShowVisitorModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
-                  <X size={24} />
-                </button>
-              </div>
-              <form onSubmit={handleVisitorSubmit} className="p-6 space-y-5">
-                {visitorError && (
-                  <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm font-medium border border-red-100">
-                    {visitorError}
-                  </div>
-                )}
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={visitorName}
-                    onChange={(e) => setVisitorName(e.target.value)}
-                    placeholder="Enter your name"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-leather-500/20 focus:border-leather-500 outline-none transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Mobile Number</label>
-                  <input
-                    type="text"
-                    required
-                    value={visitorMobile}
-                    onChange={(e) => setVisitorMobile(e.target.value)}
-                    placeholder="Enter mobile number"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-4 focus:ring-leather-500/20 focus:border-leather-500 outline-none transition-all"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={visitorLoading || !visitorName || !visitorMobile}
-                  className="w-full bg-leather-800 text-white font-bold text-lg py-3.5 rounded-xl hover:bg-leather-900 transition-all shadow-md disabled:opacity-70 mt-2 flex justify-center items-center gap-2"
-                >
-                  {visitorLoading ? 'Registering...' : 'Continue to Portal'} <ArrowRight size={18} />
-                </button>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
