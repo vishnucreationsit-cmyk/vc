@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --color-leather-50: #fdf8f6;
+  --color-leather-100: #f2e8e5;
+  --color-leather-200: #eaddd7;
+  --color-leather-300: #e0cec7;
+  --color-leather-400: #d2bab0;
+  --color-leather-500: #a37b67;
+  --color-leather-600: #8b604e;
+  --color-leather-700: #694132;
+  --color-leather-800: #46271c;
+  --color-leather-900: #271109;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+}
