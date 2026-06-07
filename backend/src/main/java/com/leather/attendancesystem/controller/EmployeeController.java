@@ -43,8 +43,13 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
-        return ResponseEntity.ok(employeeService.createEmployee(employee));
+    public ResponseEntity<?> createEmployee(@RequestBody com.leather.attendancesystem.dto.EmployeeRegistrationDTO dto) {
+        try {
+            Employee employee = employeeService.createEmployeeWithAccount(dto);
+            return ResponseEntity.ok(employee);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
     @PutMapping("/{id}")

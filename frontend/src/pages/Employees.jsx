@@ -60,22 +60,22 @@ const Employees = () => {
         // Edit Employee
         await axios.put(`${import.meta.env.VITE_API_URL}/api/employees/${selectedEmployee.id}`, payload);
       } else {
-        // Create Employee
-        const empRes = await axios.post(import.meta.env.VITE_API_URL + '/api/employees', payload);
-        // Create Login immediately
-        await axios.post(import.meta.env.VITE_API_URL + '/api/auth/register', {
+        // Create Employee & Account atomically
+        const registrationPayload = {
+          employee: payload,
           username: formData.username,
           password: formData.password,
-          role: formData.role,
-          employeeId: empRes.data.id
-        });
+          role: formData.role
+        };
+        await axios.post(import.meta.env.VITE_API_URL + '/api/employees', registrationPayload);
       }
 
       setShowModal(false);
       fetchEmployees(true);
     } catch (error) {
-      alert("Error saving employee");
       console.error(error);
+      const errorMsg = error.response?.data?.error || error.response?.data?.message || typeof error.response?.data === 'string' ? error.response.data : error.message;
+      alert("Error saving employee: " + errorMsg);
     }
   };
 
