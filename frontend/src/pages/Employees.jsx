@@ -24,8 +24,6 @@ const Employees = () => {
 
   useEffect(() => {
     fetchEmployees();
-    const interval = setInterval(fetchEmployees, 5000);
-    return () => clearInterval(interval);
   }, []);
 
   const fetchEmployees = async (silent = false) => {

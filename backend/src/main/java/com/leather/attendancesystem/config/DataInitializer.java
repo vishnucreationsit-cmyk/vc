@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ public class DataInitializer implements CommandLineRunner {
 
     private final AppUserRepository appUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public void run(String... args) throws Exception {
@@ -39,5 +41,13 @@ public class DataInitializer implements CommandLineRunner {
 
         appUserRepository.save(admin);
         System.out.println("Admin password successfully synced with DataInitializer");
+
+        // Clean up visitor table
+        try {
+            jdbcTemplate.execute("DROP TABLE IF EXISTS visitor");
+            System.out.println("Successfully dropped visitor table");
+        } catch (Exception e) {
+            System.out.println("Could not drop visitor table: " + e.getMessage());
+        }
     }
 }

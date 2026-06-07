@@ -11,7 +11,7 @@ import Orders from './pages/Orders';
 import ForgotPassword from './pages/ForgotPassword';
 import NotificationCenter from './pages/NotificationCenter';
 import PublicWebsite from './pages/PublicWebsite';
-import VisitorManagement from './pages/VisitorManagement';
+
 
 const ProtectedRoute = ({ children, roles }) => {
   const { user } = useAuth();
@@ -37,7 +37,7 @@ function AppRoutes() {
       <Route path="/leave" element={<ProtectedRoute><Leave /></ProtectedRoute>} />
       <Route path="/orders" element={<ProtectedRoute roles={['ADMIN', 'MANAGER']}><Orders /></ProtectedRoute>} />
       <Route path="/notifications" element={<ProtectedRoute roles={['ADMIN', 'MANAGER']}><NotificationCenter /></ProtectedRoute>} />
-      <Route path="/visitors" element={<ProtectedRoute roles={['ADMIN', 'MANAGER']}><VisitorManagement /></ProtectedRoute>} />
+
       
       {/* Catch All */}
       <Route path="*" element={<Navigate to="/" />} />

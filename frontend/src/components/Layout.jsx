@@ -30,8 +30,7 @@ const Layout = ({ children }) => {
     { name: 'Employees', path: '/employees', icon: <Users size={20} />, roles: ['ADMIN', 'MANAGER'] },
     { name: 'Leave', path: '/leave', icon: <Calendar size={20} />, roles: ['ADMIN', 'MANAGER', 'EMPLOYEE'] },
     { name: 'Orders', path: '/orders', icon: <Package size={20} />, roles: ['ADMIN', 'MANAGER'] },
-    { name: 'Alerts', path: '/notifications', icon: <Bell size={20} />, roles: ['ADMIN', 'MANAGER'] },
-    { name: 'Visitors', path: '/visitors', icon: <Users size={20} />, roles: ['ADMIN', 'MANAGER'] },
+    { name: 'Alerts', path: '/notifications', icon: <Bell size={20} />, roles: ['ADMIN', 'MANAGER'] }
   ];
 
   const handleLogout = () => {

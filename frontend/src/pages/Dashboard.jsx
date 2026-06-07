@@ -17,7 +17,7 @@ const Dashboard = () => {
   const [allLeaves, setAllLeaves] = useState([]);
   const [allEmployees, setAllEmployees] = useState([]);
   const [enquiries, setEnquiries] = useState([]);
-  const [visitors, setVisitors] = useState([]);
+
   const [completedOrders, setCompletedOrders] = useState([]);
   const todayDate = format(new Date(), 'yyyy-MM-dd');
 
@@ -25,19 +25,19 @@ const Dashboard = () => {
     if (user?.role === 'ADMIN' || user?.role === 'MANAGER') {
       const fetchLive = async () => {
         try {
-          const [attRes, leaveRes, empRes, enqRes, visRes, orderRes] = await Promise.all([
+          const [attRes, leaveRes, empRes, enqRes, orderRes] = await Promise.all([
             axios.get(`${import.meta.env.VITE_API_URL}/api/attendance/daily?date=${todayDate}`),
             axios.get(import.meta.env.VITE_API_URL + '/api/leave/all'),
             axios.get(import.meta.env.VITE_API_URL + '/api/employees'),
             axios.get(import.meta.env.VITE_API_URL + '/api/enquiries'),
-            axios.get(import.meta.env.VITE_API_URL + '/api/visitors'),
+
             axios.get(import.meta.env.VITE_API_URL + '/api/orders')
           ]);
           setLiveAttendance(attRes.data);
           setAllLeaves(leaveRes.data);
           setAllEmployees(empRes.data);
           setEnquiries(enqRes.data);
-          setVisitors(visRes.data);
+
 
           if (orderRes.data) {
             const delivered = orderRes.data.filter(o => o.status === 'Delivered');
@@ -245,84 +245,6 @@ const Dashboard = () => {
             <div className="flex items-center justify-between mt-2">
               <h3 className="text-2xl font-black text-red-600">{allEmployees.filter(e => e.status === 'INACTIVE').length}</h3>
               <Users className="text-red-200" size={28} />
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Visitor Analytics Dashboard */}
-      {(user?.role === 'ADMIN' || user?.role === 'MANAGER') && (
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeIn} className="mt-8 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-              <Users className="text-indigo-600" /> Visitor Analytics
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center hover:shadow-md transition-shadow">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Today's Visitors</p>
-              <h3 className="text-4xl font-black text-indigo-600">
-                {visitors.filter(v => new Date(v.visitTime).toDateString() === new Date().toDateString()).length}
-              </h3>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center hover:shadow-md transition-shadow">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Weekly Visitors</p>
-              <h3 className="text-4xl font-black text-blue-600">
-                {visitors.filter(v => new Date(v.visitTime) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length}
-              </h3>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center hover:shadow-md transition-shadow">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Monthly Visitors</p>
-              <h3 className="text-4xl font-black text-purple-600">
-                {visitors.filter(v => new Date(v.visitTime).getMonth() === new Date().getMonth() && new Date(v.visitTime).getFullYear() === new Date().getFullYear()).length}
-              </h3>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 text-center hover:shadow-md transition-shadow">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Total Visitors</p>
-              <h3 className="text-4xl font-black text-leather-600">{visitors.length}</h3>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h3 className="text-sm font-bold text-gray-800 uppercase tracking-widest mb-6">Daily Visitor Trend</h3>
-              <div className="flex items-end justify-between h-40 gap-2">
-                {[6, 5, 4, 3, 2, 1, 0].map(daysAgo => {
-                  const d = new Date();
-                  d.setDate(d.getDate() - daysAgo);
-                  const count = visitors.filter(v => new Date(v.visitTime).toDateString() === d.toDateString()).length;
-                  const height = Math.max((count / (Math.max(...[1, ...visitors.map(() => 10)]))) * 100, 5); // simple scaling
-                  return (
-                    <div key={daysAgo} className="flex flex-col items-center flex-1 group">
-                      <div className="w-full bg-indigo-100 rounded-t-sm relative group-hover:bg-indigo-200 transition-colors" style={{ height: `${height}%`, minHeight: '10px' }}>
-                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">{count}</span>
-                      </div>
-                      <span className="text-[10px] text-gray-400 mt-2 font-medium">{d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h3 className="text-sm font-bold text-gray-800 uppercase tracking-widest mb-6">Monthly Visitor Trend</h3>
-              <div className="flex items-end justify-between h-40 gap-2">
-                {[5, 4, 3, 2, 1, 0].map(monthsAgo => {
-                  const d = new Date();
-                  d.setMonth(d.getMonth() - monthsAgo);
-                  const count = visitors.filter(v => new Date(v.visitTime).getMonth() === d.getMonth() && new Date(v.visitTime).getFullYear() === d.getFullYear()).length;
-                  const height = Math.max((count / (Math.max(...[1, ...visitors.map(() => 20)]))) * 100, 5);
-                  return (
-                    <div key={monthsAgo} className="flex flex-col items-center flex-1 group">
-                      <div className="w-full bg-purple-100 rounded-t-sm relative group-hover:bg-purple-200 transition-colors" style={{ height: `${height}%`, minHeight: '10px' }}>
-                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity">{count}</span>
-                      </div>
-                      <span className="text-[10px] text-gray-400 mt-2 font-medium">{d.toLocaleDateString('en-US', { month: 'short' })}</span>
-                    </div>
-                  );
-                })}
-              </div>
             </div>
           </div>
         </motion.div>

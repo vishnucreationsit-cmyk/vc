@@ -34,7 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/api/enquiries", "/api/enquiries/**").permitAll()
-                        .requestMatchers("/api/visitors", "/api/visitors/**").permitAll()
+
                         .requestMatchers("/api/config/contact").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
                         .anyRequest().authenticated()
