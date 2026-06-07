@@ -98,7 +98,21 @@ public class EmployeeService {
     }
 
     public Employee createEmployee(Employee employee) {
-
+        if (employeeRepository.findByEmployeeId(employee.getEmployeeId()).isPresent()) {
+            throw new RuntimeException("Employee ID already exists");
+        }
+        Employee saved = employeeRepository.save(employee);
+        
+        Notification notification = new Notification();
+        notification.setTitle("New Employee Created");
+        notification.setMessage(String.format("Name: %s\nID: %s\nDepartment: %s",
+                saved.getName(), saved.getEmployeeId(), saved.getDepartment()));
+        notification.setType("EMPLOYEE");
+        notificationRepository.save(notification);
+        
+        return saved;
+    }
+    
     public Employee updateEmployee(Integer id, Employee employeeDetails) {
         Employee employee = getEmployeeById(id);
         
