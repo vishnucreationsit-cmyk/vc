@@ -230,6 +230,17 @@ const Login = () => {
               {!loading && <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />}
             </button>
           </form>
+
+          <div className="mt-12 pt-8 border-t border-gray-200/80 text-center">
+            <p className="text-gray-500 text-sm font-medium">Are you a visitor?</p>
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="mt-3 flex items-center justify-center gap-2 w-full py-3.5 border-2 border-gray-200 rounded-xl text-gray-700 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all"
+            >
+              <Globe size={18} /> Go to Public Portal
+            </button>
+          </div>
         </div>
       </div>
     </div>
