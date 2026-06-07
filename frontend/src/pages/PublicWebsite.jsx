@@ -37,7 +37,7 @@ const PublicWebsite = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/config/contact').then(res => {
+    axios.get(import.meta.env.VITE_API_URL + '/api/config/contact').then(res => {
       if (res.data) setContactConfig(res.data);
     }).catch(() => { });
   }, []);
@@ -47,7 +47,7 @@ const PublicWebsite = () => {
     if (!name || !mobile) return alert('Name and mobile number are required.');
     setLoading(true);
     try {
-      await axios.post('http://localhost:8080/api/visitors', { name, mobileNumber: mobile });
+      await axios.post(import.meta.env.VITE_API_URL + '/api/visitors', { name, mobileNumber: mobile });
       localStorage.setItem('visitorToken', 'true');
       localStorage.setItem('visitorName', name);
       setVisitorToken('true');
@@ -61,7 +61,7 @@ const PublicWebsite = () => {
   const handleEnquirySubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8080/api/enquiries', {
+      await axios.post(import.meta.env.VITE_API_URL + '/api/enquiries', {
         name: e.target.name.value,
         email: e.target.email.value,
         phone: e.target.phone.value,

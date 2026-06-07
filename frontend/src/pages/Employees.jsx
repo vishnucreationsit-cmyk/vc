@@ -31,7 +31,7 @@ const Employees = () => {
   const fetchEmployees = async (silent = false) => {
     if (!silent) setLoading(true);
     try {
-      const response = await axios.get('http://localhost:8080/api/employees');
+      const response = await axios.get(import.meta.env.VITE_API_URL + '/api/employees');
       setEmployees(response.data);
     } catch (error) {
       console.error("Error fetching employees", error);
@@ -60,12 +60,12 @@ const Employees = () => {
 
       if (selectedEmployee) {
         // Edit Employee
-        await axios.put(`http://localhost:8080/api/employees/${selectedEmployee.id}`, payload);
+        await axios.put(`${import.meta.env.VITE_API_URL}/api/employees/${selectedEmployee.id}`, payload);
       } else {
         // Create Employee
-        const empRes = await axios.post('http://localhost:8080/api/employees', payload);
+        const empRes = await axios.post(import.meta.env.VITE_API_URL + '/api/employees', payload);
         // Create Login immediately
-        await axios.post('http://localhost:8080/api/auth/register', {
+        await axios.post(import.meta.env.VITE_API_URL + '/api/auth/register', {
           username: formData.username,
           password: formData.password,
           role: formData.role,
@@ -84,7 +84,7 @@ const Employees = () => {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8080/api/auth/reset-password', {
+      await axios.post(import.meta.env.VITE_API_URL + '/api/auth/reset-password', {
         userId: selectedEmployee.userId,
         newPassword: resetPasswordData.newPassword
       });
@@ -99,10 +99,10 @@ const Employees = () => {
     const { action, employee } = showConfirmModal;
     try {
       if (action === 'REMOVE') {
-        await axios.delete(`http://localhost:8080/api/employees/${employee.id}`);
+        await axios.delete(`${import.meta.env.VITE_API_URL}/api/employees/${employee.id}`);
       } else if (action === 'ACTIVATE') {
         const payload = { ...employee, status: 'ACTIVE' };
-        await axios.put(`http://localhost:8080/api/employees/${employee.id}`, payload);
+        await axios.put(`${import.meta.env.VITE_API_URL}/api/employees/${employee.id}`, payload);
       }
       setShowConfirmModal({ show: false, action: '', employee: null });
       fetchEmployees(true);
@@ -114,7 +114,7 @@ const Employees = () => {
   const handleSendCredentials = async (employee) => {
     if (!window.confirm(`Are you sure you want to send new login credentials to ${employee.name}'s email?`)) return;
     try {
-      const response = await axios.post(`http://localhost:8080/api/employees/${employee.id}/send-credentials`);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/employees/${employee.id}/send-credentials`);
       alert(response.data.message || 'Credentials sent successfully!');
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {

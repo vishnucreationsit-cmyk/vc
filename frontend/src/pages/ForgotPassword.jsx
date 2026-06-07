@@ -38,7 +38,7 @@ const ForgotPassword = () => {
     try {
       setLoading(true);
       setMessage({ type: '', text: '' });
-      const res = await axios.post('http://localhost:8080/api/auth/forgot-password/send-otp', { searchTerm });
+      const res = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/forgot-password/send-otp', { searchTerm });
       setUserData(res.data);
       setMessage({ type: 'success', text: res.data.message });
       setTimeout(() => { setMessage({ type: '', text: '' }); setStep(2); }, 2000);
@@ -67,7 +67,7 @@ const ForgotPassword = () => {
     try {
       setLoading(true);
       setMessage({ type: '', text: '' });
-      const res = await axios.post('http://localhost:8080/api/auth/verify-otp', { 
+      const res = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/verify-otp', { 
         userId: userData.userId, 
         otpCode 
       });
@@ -93,7 +93,7 @@ const ForgotPassword = () => {
     try {
       setLoading(true);
       setMessage({ type: '', text: '' });
-      const res = await axios.post('http://localhost:8080/api/auth/reset-password', { 
+      const res = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/reset-password', { 
         resetToken, 
         newPassword,
         method: 'MOBILE'

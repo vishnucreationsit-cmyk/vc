@@ -85,7 +85,7 @@ const Attendance = () => {
 
   const fetchGeofenceConfig = async () => {
     try {
-      const res = await axios.get('http://localhost:8080/api/geofence/config');
+      const res = await axios.get(import.meta.env.VITE_API_URL + '/api/geofence/config');
       setGeofenceConfig(res.data);
       setNewRadius(res.data.allowedRadiusMeters);
     } catch (err) {
@@ -95,7 +95,7 @@ const Attendance = () => {
 
   const handleUpdateGeofence = async () => {
     try {
-      await axios.post('http://localhost:8080/api/geofence/config', {
+      await axios.post(import.meta.env.VITE_API_URL + '/api/geofence/config', {
         companyLat: geofenceConfig.companyLat,
         companyLng: geofenceConfig.companyLng,
         allowedRadiusMeters: newRadius
@@ -111,7 +111,7 @@ const Attendance = () => {
   const fetchDailyAttendance = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:8080/api/attendance/daily?date=${today}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/attendance/daily?date=${today}`);
       let data = response.data;
       
       const record = data.find(a => a.employee.id === parseInt(user.employeeId));
@@ -131,7 +131,7 @@ const Attendance = () => {
   const fetchMyHistory = async () => {
     try {
       setHistoryLoading(true);
-      const response = await axios.get(`http://localhost:8080/api/attendance/my-attendance?employeeId=${user.employeeId}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/attendance/my-attendance?employeeId=${user.employeeId}`);
       setHistoryRecords(response.data);
     } catch (err) {
       console.error("Failed to fetch history", err);
@@ -143,7 +143,7 @@ const Attendance = () => {
   const fetchAllHistory = async () => {
     try {
       setHistoryLoading(true);
-      const response = await axios.get(`http://localhost:8080/api/attendance/all`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/attendance/all`);
       // Sort descending by date and time
       const sorted = response.data.sort((a, b) => {
         if (a.attendanceDate !== b.attendanceDate) {
@@ -173,7 +173,7 @@ const Attendance = () => {
         employeeId: parseInt(user.employeeId), date: today, time: format(new Date(), 'HH:mm:ss'),
         latitude: currentLocation.lat, longitude: currentLocation.lng
       };
-      await axios.post('http://localhost:8080/api/attendance/check-in', payload);
+      await axios.post(import.meta.env.VITE_API_URL + '/api/attendance/check-in', payload);
       setMessage({ type: 'success', text: 'Attendance Marked Successfully' });
       fetchDailyAttendance();
       if (user?.role === 'EMPLOYEE') fetchMyHistory();
@@ -196,7 +196,7 @@ const Attendance = () => {
         employeeId: parseInt(user.employeeId), date: today, time: format(new Date(), 'HH:mm:ss'),
         latitude: currentLocation.lat, longitude: currentLocation.lng
       };
-      await axios.post('http://localhost:8080/api/attendance/check-out', payload);
+      await axios.post(import.meta.env.VITE_API_URL + '/api/attendance/check-out', payload);
       setMessage({ type: 'success', text: 'Check Out Marked Successfully' });
       fetchDailyAttendance();
       if (user?.role === 'EMPLOYEE') fetchMyHistory();

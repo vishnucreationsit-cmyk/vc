@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_BASE_URL = 'http://localhost:8080/api/orders';
+const API_BASE_URL = import.meta.env.VITE_API_URL + '/api/orders';
 
 const STATUS_STEPS = [
   'Order Received', 'Design Approval', 'Raw Material Procurement', 
@@ -311,7 +311,7 @@ const Orders = () => {
                         title="View Gallery"
                       >
                         {order.images && order.images.length > 0 ? (
-                          <img src={`http://localhost:8080${order.images[0].imageUrl}`} alt="thumb" className="w-full h-full object-cover" />
+                          <img src={`${import.meta.env.VITE_API_URL}${order.images[0].imageUrl}`} alt="thumb" className="w-full h-full object-cover" />
                         ) : (
                           <ImageIcon size={20} className="text-gray-400" />
                         )}
@@ -594,7 +594,7 @@ const Orders = () => {
                       {/* Main Viewer */}
                       <div className="flex-1 relative flex items-center justify-center mb-6 group/viewer">
                         <img 
-                          src={`http://localhost:8080${images[galleryIndex].imageUrl}`} 
+                          src={`${import.meta.env.VITE_API_URL}${images[galleryIndex].imageUrl}`} 
                           alt="Order" 
                           className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
                         />
@@ -606,7 +606,7 @@ const Orders = () => {
                           onClick={async () => {
                             if (window.confirm('Are you sure you want to delete this image?')) {
                               try {
-                                await axios.delete(`http://localhost:8080/api/orders/images/${images[galleryIndex].id}`);
+                                await axios.delete(`${import.meta.env.VITE_API_URL}/api/orders/images/${images[galleryIndex].id}`);
                                 const newImages = images.filter((_, i) => i !== galleryIndex);
                                 setImages(newImages);
                                 // Update orders list so thumbnail on dashboard refreshes
@@ -643,7 +643,7 @@ const Orders = () => {
                             onClick={() => setGalleryIndex(idx)}
                             className={`flex-shrink-0 w-24 h-full rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${galleryIndex === idx ? 'border-leather-500 scale-105' : 'border-transparent opacity-60 hover:opacity-100'}`}
                           >
-                            <img src={`http://localhost:8080${img.imageUrl}`} alt="thumb" className="w-full h-full object-cover" />
+                            <img src={`${import.meta.env.VITE_API_URL}${img.imageUrl}`} alt="thumb" className="w-full h-full object-cover" />
                           </div>
                         ))}
                       </div>

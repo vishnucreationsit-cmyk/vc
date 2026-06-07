@@ -39,7 +39,7 @@ const Login = () => {
       if (loginType === 'ADMIN') {
         if (!otpStep) {
           // Send OTP
-          const response = await axios.post('http://localhost:8080/api/auth/admin-login/send-otp', { 
+          const response = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/admin-login/send-otp', { 
             username 
           });
           setAdminUserId(response.data.userId);
@@ -47,7 +47,7 @@ const Login = () => {
           setOtpStep(true);
         } else {
           // Verify OTP
-          const response = await axios.post('http://localhost:8080/api/auth/admin-login/verify-otp', { 
+          const response = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/admin-login/verify-otp', { 
             userId: adminUserId,
             otpCode 
           });
@@ -56,7 +56,7 @@ const Login = () => {
         }
       } else {
         // Employee Password Login
-        const response = await axios.post('http://localhost:8080/api/auth/login', { 
+        const response = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/login', { 
           username, 
           password,
           loginType 
@@ -81,7 +81,7 @@ const Login = () => {
     try {
       setVisitorLoading(true);
       setVisitorError('');
-      await axios.post('http://localhost:8080/api/visitors', {
+      await axios.post(import.meta.env.VITE_API_URL + '/api/visitors', {
         name: visitorName,
         mobileNumber: visitorMobile
       });

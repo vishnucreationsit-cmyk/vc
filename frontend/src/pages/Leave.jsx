@@ -35,10 +35,10 @@ const Leave = () => {
     if (!silent) setLoading(true);
     try {
       if (activeTab === 'my-leaves' || activeTab === 'apply') {
-        const res = await axios.get(`http://localhost:8080/api/leave/my-requests?employeeId=${user.employeeId}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/leave/my-requests?employeeId=${user.employeeId}`);
         setMyLeaves(res.data);
       } else if (activeTab === 'admin-portal' && (user.role === 'ADMIN' || user.role === 'MANAGER')) {
-        const res = await axios.get('http://localhost:8080/api/leave/all');
+        const res = await axios.get(import.meta.env.VITE_API_URL + '/api/leave/all');
         // Sort newest first
         const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setAllLeaves(sorted);
@@ -55,7 +55,7 @@ const Leave = () => {
     try {
       setActionLoading(true);
       setMessage({ type: '', text: '' });
-      await axios.post('http://localhost:8080/api/leave/apply', {
+      await axios.post(import.meta.env.VITE_API_URL + '/api/leave/apply', {
         ...formData,
         employeeId: parseInt(user.employeeId)
       });
@@ -72,7 +72,7 @@ const Leave = () => {
   const handleAction = async (id, action) => {
     try {
       setActionLoading(true);
-      await axios.put(`http://localhost:8080/api/leave/${action}/${id}?managerId=${user?.employeeId || ''}`);
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/leave/${action}/${id}?managerId=${user?.employeeId || ''}`);
       fetchData();
     } catch (err) {
       console.error(`Failed to ${action} leave`, err);

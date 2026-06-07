@@ -16,7 +16,7 @@ const NotificationCenter = () => {
   const fetchNotifications = async (silent = false) => {
     if (!silent) setLoading(true);
     try {
-      const res = await axios.get('http://localhost:8080/api/notifications');
+      const res = await axios.get(import.meta.env.VITE_API_URL + '/api/notifications');
       setNotifications(res.data);
     } catch (err) {
       console.error(err);
@@ -27,14 +27,14 @@ const NotificationCenter = () => {
 
   const markAsRead = async (id) => {
     try {
-      await axios.put(`http://localhost:8080/api/notifications/${id}/read`);
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/notifications/${id}/read`);
       fetchNotifications(true);
     } catch (err) {}
   };
 
   const deleteNotification = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/api/notifications/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/notifications/${id}`);
       fetchNotifications(true);
     } catch (err) {}
   };

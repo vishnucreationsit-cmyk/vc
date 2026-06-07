@@ -26,12 +26,12 @@ const Dashboard = () => {
       const fetchLive = async () => {
         try {
           const [attRes, leaveRes, empRes, enqRes, visRes, orderRes] = await Promise.all([
-            axios.get(`http://localhost:8080/api/attendance/daily?date=${todayDate}`),
-            axios.get('http://localhost:8080/api/leave/all'),
-            axios.get('http://localhost:8080/api/employees'),
-            axios.get('http://localhost:8080/api/enquiries'),
-            axios.get('http://localhost:8080/api/visitors'),
-            axios.get('http://localhost:8080/api/orders')
+            axios.get(`${import.meta.env.VITE_API_URL}/api/attendance/daily?date=${todayDate}`),
+            axios.get(import.meta.env.VITE_API_URL + '/api/leave/all'),
+            axios.get(import.meta.env.VITE_API_URL + '/api/employees'),
+            axios.get(import.meta.env.VITE_API_URL + '/api/enquiries'),
+            axios.get(import.meta.env.VITE_API_URL + '/api/visitors'),
+            axios.get(import.meta.env.VITE_API_URL + '/api/orders')
           ]);
           setLiveAttendance(attRes.data);
           setAllLeaves(leaveRes.data);
@@ -375,12 +375,12 @@ const Dashboard = () => {
 
               {/* Display the first uploaded image, or a placeholder */}
               <div
-                onClick={() => order.images && order.images.length > 0 ? openLightbox(0, order.images.map(img => 'http://localhost:8080' + img.imageUrl)) : null}
+                onClick={() => order.images && order.images.length > 0 ? openLightbox(0, order.images.map(img => import.meta.env.VITE_API_URL + '' + img.imageUrl)) : null}
                 className="w-full md:w-64 h-56 bg-white rounded-lg shadow-sm border border-green-100 overflow-hidden relative cursor-pointer group flex items-center justify-center"
               >
                 {order.images && order.images.length > 0 ? (
                   <>
-                    <img src={`http://localhost:8080${order.images[0].imageUrl}`} alt={order.productName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <img src={`${import.meta.env.VITE_API_URL}${order.images[0].imageUrl}`} alt={order.productName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Package className="text-white mb-2" size={32} />
                       <span className="text-white font-bold bg-black/60 px-4 py-2 rounded-full">View Gallery ({order.images.length})</span>

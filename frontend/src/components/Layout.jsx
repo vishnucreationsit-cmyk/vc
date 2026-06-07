@@ -61,7 +61,7 @@ const Layout = ({ children }) => {
 
   const fetchNotifications = async () => {
     try {
-      const res = await axios.get('http://localhost:8080/api/notifications/unread');
+      const res = await axios.get(import.meta.env.VITE_API_URL + '/api/notifications/unread');
       setNotifications(res.data);
     } catch (err) {
       // silent fail
@@ -70,14 +70,14 @@ const Layout = ({ children }) => {
 
   const markAsRead = async (id) => {
     try {
-      await axios.put(`http://localhost:8080/api/notifications/${id}/read`);
+      await axios.put(`${import.meta.env.VITE_API_URL}/api/notifications/${id}/read`);
       fetchNotifications();
     } catch (err) {}
   };
 
   const markAllAsRead = async () => {
     try {
-      await axios.put('http://localhost:8080/api/notifications/read-all');
+      await axios.put(import.meta.env.VITE_API_URL + '/api/notifications/read-all');
       fetchNotifications();
       setShowNotifications(false);
     } catch (err) {}
