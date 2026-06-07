@@ -17,6 +17,7 @@ const login = async (req, res, next) => {
       }
       res.json({
         id: user._id,
+        username: user.name,
         name: user.name,
         email: user.email,
         employeeId: user.employeeId,

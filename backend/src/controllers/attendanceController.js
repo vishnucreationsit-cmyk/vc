@@ -70,4 +70,36 @@ const getAllAttendance = async (req, res, next) => {
   }
 };
 
-module.exports = { checkIn, checkOut, getMyAttendance, getAllAttendance };
+const Settings = require('../models/Settings');
+
+const getGeofenceConfig = async (req, res) => {
+  let settings = await Settings.findOne({ key: 'GEOFENCE' });
+  if (!settings) {
+    settings = await Settings.create({
+      key: 'GEOFENCE',
+      value: {
+        companyLat: parseFloat(process.env.COMPANY_LAT),
+        companyLng: parseFloat(process.env.COMPANY_LNG),
+        allowedRadiusMeters: parseFloat(process.env.GEOFENCE_RADIUS_METERS)
+      }
+    });
+  }
+  res.json(settings.value);
+};
+
+const updateGeofenceConfig = async (req, res, next) => {
+  try {
+    const { companyLat, companyLng, allowedRadiusMeters } = req.body;
+    let settings = await Settings.findOne({ key: 'GEOFENCE' });
+    if (!settings) {
+      settings = new Settings({ key: 'GEOFENCE' });
+    }
+    settings.value = { companyLat, companyLng, allowedRadiusMeters };
+    await settings.save();
+    res.json(settings.value);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { checkIn, checkOut, getMyAttendance, getAllAttendance, getGeofenceConfig, updateGeofenceConfig };

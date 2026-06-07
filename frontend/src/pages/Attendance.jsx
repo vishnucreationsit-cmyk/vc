@@ -85,7 +85,7 @@ const Attendance = () => {
 
   const fetchGeofenceConfig = async () => {
     try {
-      const res = await axios.get(import.meta.env.VITE_API_URL + '/api/geofence/config');
+      const res = await axios.get(import.meta.env.VITE_API_URL + '/api/attendance/geofence/config');
       setGeofenceConfig(res.data);
       setNewRadius(res.data.allowedRadiusMeters);
     } catch (err) {
@@ -95,7 +95,7 @@ const Attendance = () => {
 
   const handleUpdateGeofence = async () => {
     try {
-      await axios.post(import.meta.env.VITE_API_URL + '/api/geofence/config', {
+      await axios.post(import.meta.env.VITE_API_URL + '/api/attendance/geofence/config', {
         companyLat: geofenceConfig.companyLat,
         companyLng: geofenceConfig.companyLng,
         allowedRadiusMeters: newRadius

@@ -30,34 +30,14 @@ const Login = () => {
       setError('');
       setSuccessMsg('');
 
-      if (loginType === 'ADMIN') {
-        if (!otpStep) {
-          // Send OTP
-          const response = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/admin-login/send-otp', { 
-            username 
-          });
-          setAdminUserId(response.data.userId);
-          setSuccessMsg(response.data.message);
-          setOtpStep(true);
-        } else {
-          // Verify OTP
-          const response = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/admin-login/verify-otp', { 
-            userId: adminUserId,
-            otpCode 
-          });
-          login(response.data);
-          navigate('/dashboard');
-        }
-      } else {
-        // Employee Password Login
-        const response = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/login', { 
-          username, 
-          password,
-          loginType 
-        });
-        login(response.data);
-        navigate('/dashboard');
-      }
+      // Unified Login for both Employee and Admin
+      const response = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/login', { 
+        username, 
+        password,
+        loginType 
+      });
+      login(response.data);
+      navigate('/dashboard');
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {
         setError(err.response.data.error);
@@ -174,59 +154,38 @@ const Login = () => {
               />
             </div>
             
-            {loginType === 'EMPLOYEE' && (
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">Password</label>
-                  <button type="button" onClick={() => navigate('/forgot-password')} className="text-sm font-bold text-leather-600 hover:text-leather-800 transition-colors">
-                    Forgot Password?
-                  </button>
-                </div>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full px-5 py-4 pr-12 rounded-xl border border-gray-200 focus:ring-4 focus:ring-leather-500/20 focus:border-leather-500 outline-none transition-all bg-white shadow-sm text-gray-800 font-medium tracking-wide"
-                    required={loginType === 'EMPLOYEE'}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
-                  >
-                    {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
-                  </button>
-                </div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">Password</label>
+                <button type="button" onClick={() => navigate('/forgot-password')} className="text-sm font-bold text-leather-600 hover:text-leather-800 transition-colors">
+                  Forgot Password?
+                </button>
               </div>
-            )}
-
-            {loginType === 'ADMIN' && otpStep && (
-              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide">Enter OTP</label>
-                  <button type="button" onClick={() => { setOtpStep(false); setSuccessMsg(''); setError(''); }} className="text-sm font-bold text-leather-600 hover:text-leather-800 transition-colors">
-                    Change Username
-                  </button>
-                </div>
+              <div className="relative">
                 <input
-                  type="text"
-                  value={otpCode}
-                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').substring(0, 6))}
-                  placeholder="000000"
-                  className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:ring-4 focus:ring-leather-500/20 focus:border-leather-500 outline-none transition-all bg-white shadow-sm text-gray-800 font-bold tracking-[0.5em] text-center text-xl"
-                  required={loginType === 'ADMIN' && otpStep}
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full px-5 py-4 pr-12 rounded-xl border border-gray-200 focus:ring-4 focus:ring-leather-500/20 focus:border-leather-500 outline-none transition-all bg-white shadow-sm text-gray-800 font-medium tracking-wide"
+                  required
                 />
-              </motion.div>
-            )}
-            
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none transition-colors"
+                >
+                  {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+                </button>
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={loading}
               className="w-full bg-leather-800 text-white font-black text-lg py-4 rounded-xl hover:bg-leather-900 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-xl mt-4 flex items-center justify-center gap-2 group"
             >
-              {loading ? 'Processing...' : (loginType === 'ADMIN' && !otpStep ? 'Send OTP' : 'Sign In')}
+              {loading ? 'Processing...' : 'Sign In'}
               {!loading && <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />}
             </button>
           </form>
