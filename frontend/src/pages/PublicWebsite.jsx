@@ -30,7 +30,21 @@ const BrandCard = ({ brand }) => {
 
 const PublicWebsite = () => {
   const [contactConfig, setContactConfig] = useState({ phone: '+91 90031 81819', email: 'contact@vishnucreations.com' });
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+
+  // Close menu when clicking navigation link
+  const closeMenu = () => setMenuOpen(false);
+  
+  // Disable body scroll when menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
 
   useEffect(() => {
     axios.get(import.meta.env.VITE_API_URL + '/api/config/contact').then(res => {
@@ -60,9 +74,9 @@ const PublicWebsite = () => {
   return (
     <div className="min-h-screen bg-gray-50 font-inter text-gray-800">
       {/* Navigation */}
-      <nav className="bg-[#1a120c] text-white py-4 px-6 md:px-12 sticky top-0 z-50 shadow-md">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="text-2xl font-black tracking-tight">Vishnu <span className="text-leather-400">Creations</span></div>
+      <nav className="bg-[#1a120c] text-white py-4 px-6 md:px-12 sticky top-0 z-50 shadow-md w-full">
+        <div className="max-w-7xl mx-auto flex justify-between items-center relative">
+          <div className="text-2xl font-black tracking-tight z-50">Vishnu <span className="text-leather-400">Creations</span></div>
           <div className="hidden md:flex gap-8 text-sm font-bold tracking-wide">
             <a href="#home" className="hover:text-leather-400 transition-colors">HOME</a>
             <a href="#about" className="hover:text-leather-400 transition-colors">ABOUT US</a>
@@ -70,23 +84,49 @@ const PublicWebsite = () => {
             <a href="#brands" className="hover:text-leather-400 transition-colors">BRANDS</a>
             <a href="#contact" className="hover:text-leather-400 transition-colors">CONTACT</a>
           </div>
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-4 items-center z-50">
             <Link to="/login" className="text-sm font-bold text-gray-400 hover:text-white transition-colors hidden md:block">Staff Login</Link>
-            <button className="md:hidden text-white"><Menu /></button>
+            <button 
+              className="md:hidden text-white p-2" 
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="absolute top-full left-0 w-full bg-[#1a120c] border-t border-white/10 shadow-2xl md:hidden flex flex-col items-center py-6 gap-6 z-40"
+            >
+              <a href="#home" onClick={closeMenu} className="w-full text-center py-3 text-lg font-bold hover:text-leather-400 active:bg-white/5 transition-colors">HOME</a>
+              <a href="#about" onClick={closeMenu} className="w-full text-center py-3 text-lg font-bold hover:text-leather-400 active:bg-white/5 transition-colors">ABOUT US</a>
+              <a href="#products" onClick={closeMenu} className="w-full text-center py-3 text-lg font-bold hover:text-leather-400 active:bg-white/5 transition-colors">PRODUCTS</a>
+              <a href="#brands" onClick={closeMenu} className="w-full text-center py-3 text-lg font-bold hover:text-leather-400 active:bg-white/5 transition-colors">BRANDS</a>
+              <a href="#contact" onClick={closeMenu} className="w-full text-center py-3 text-lg font-bold hover:text-leather-400 active:bg-white/5 transition-colors">CONTACT</a>
+              <Link to="/login" onClick={closeMenu} className="w-[80%] text-center py-3 mt-4 bg-leather-600 rounded-xl text-lg font-bold text-white transition-colors">Staff Login</Link>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Hero Section */}
       <section id="home" className="bg-[#1a120c] text-white pt-20 pb-32 px-6 md:px-12 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-leather-800/20 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="max-w-7xl mx-auto relative z-10 text-center md:text-left grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">Premium Leather <br /><span className="text-leather-400">Craftsmanship</span></h1>
-            <p className="text-xl text-gray-300 mb-8 max-w-lg mx-auto md:mx-0">Established in 2010. We manufacture high-quality leather bags, wallets, belts, and custom products for global brands.</p>
-            <div className="flex gap-4 justify-center md:justify-start">
-              <a href="#products" className="bg-leather-600 hover:bg-leather-500 text-white font-bold py-3 px-8 rounded-full transition-colors">View Collection</a>
-              <a href="#contact" className="bg-white/10 hover:bg-white/20 text-white font-bold py-3 px-8 rounded-full transition-colors border border-white/10">Get In Touch</a>
+          <div className="flex flex-col items-center md:items-start w-full">
+            <h1 className="font-black mb-6 leading-tight break-words" style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)' }}>
+              Premium Leather <br /><span className="text-leather-400">Craftsmanship</span>
+            </h1>
+            <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-lg w-full">Established in 2010. We manufacture high-quality leather bags, wallets, belts, and custom products for global brands.</p>
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              <a href="#products" className="w-full sm:w-auto text-center bg-leather-600 hover:bg-leather-500 text-white font-bold py-4 px-8 rounded-full transition-colors min-h-[44px]">View Collection</a>
+              <a href="#contact" className="w-full sm:w-auto text-center bg-white/10 hover:bg-white/20 text-white font-bold py-4 px-8 rounded-full transition-colors border border-white/10 min-h-[44px]">Get In Touch</a>
             </div>
           </div>
           <div className="hidden md:block">
@@ -194,16 +234,16 @@ const PublicWebsite = () => {
                 </p>
                 <div className="space-y-6">
                   <div className="flex items-center gap-4 text-leather-100">
-                    <div className="bg-white/10 p-4 rounded-2xl backdrop-blur-sm"><Phone size={24} className="text-leather-300" /></div>
-                    <span className="text-xl font-medium">{contactConfig.phone}</span>
+                    <div className="bg-white/10 p-4 rounded-2xl backdrop-blur-sm shrink-0"><Phone size={24} className="text-leather-300" /></div>
+                    <span className="text-base sm:text-xl font-medium break-all">{contactConfig.phone}</span>
                   </div>
                   <div className="flex items-center gap-4 text-leather-100">
-                    <div className="bg-white/10 p-4 rounded-2xl backdrop-blur-sm"><Mail size={24} className="text-leather-300" /></div>
-                    <span className="text-xl font-medium">{contactConfig.email}</span>
+                    <div className="bg-white/10 p-4 rounded-2xl backdrop-blur-sm shrink-0"><Mail size={24} className="text-leather-300" /></div>
+                    <span className="text-base sm:text-xl font-medium break-all">{contactConfig.email}</span>
                   </div>
                   <div className="flex items-center gap-4 text-leather-100">
-                    <div className="bg-white/10 p-4 rounded-2xl backdrop-blur-sm"><MapPin size={24} className="text-leather-300" /></div>
-                    <span className="text-xl font-medium">Leather Industry Estate, Manufacturing Hub, Chennai</span>
+                    <div className="bg-white/10 p-4 rounded-2xl backdrop-blur-sm shrink-0"><MapPin size={24} className="text-leather-300" /></div>
+                    <span className="text-base sm:text-xl font-medium break-words">Leather Industry Estate, Manufacturing Hub, Chennai</span>
                   </div>
                 </div>
               </div>

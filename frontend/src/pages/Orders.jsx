@@ -546,9 +546,9 @@ const Orders = () => {
                 <button onClick={() => setShowGallery(false)} className="text-gray-400 hover:text-gray-600"><X size={24} /></button>
               </div>
               
-              <div className="flex flex-1 overflow-hidden">
+              <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
                 {/* Sidebar for Upload */}
-                <div className="w-80 border-r border-gray-100 bg-gray-50 p-6 flex flex-col gap-6 overflow-y-auto">
+                <div className="w-full md:w-80 border-b md:border-b-0 md:border-r border-gray-100 bg-gray-50 p-6 flex flex-col gap-6 overflow-y-auto">
                   <div>
                     <h3 className="font-bold text-gray-800 mb-2">Upload New Image</h3>
                     <form onSubmit={handleFileUpload} className="space-y-4">

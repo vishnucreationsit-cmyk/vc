@@ -183,7 +183,7 @@ const Layout = ({ children }) => {
 
                 {/* Notifications Dropdown */}
                 {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-fade-in origin-top-right">
+                  <div className="absolute right-0 mt-2 w-[90vw] sm:w-96 max-w-[100vw] sm:max-w-none bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden animate-fade-in origin-top-right">
                     <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gray-50">
                       <h3 className="font-bold text-gray-800 flex items-center gap-2">
                         <Bell size={16} className="text-leather-600" /> Notifications
