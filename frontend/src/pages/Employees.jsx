@@ -239,13 +239,13 @@ const Employees = () => {
       {/* Main Employee Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
             <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50">
               <h2 className="text-xl font-bold text-gray-800">{selectedEmployee ? 'Edit Employee Details' : 'Register New Employee'}</h2>
               <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600"><X size={24} /></button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1">
               <div className="grid grid-cols-2 gap-5">
                 <div className="col-span-2">
                   <label className="block text-sm font-bold text-gray-700 mb-1">Full Name</label>

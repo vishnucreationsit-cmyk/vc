@@ -29,10 +29,6 @@ const BrandCard = ({ brand }) => {
 };
 
 const PublicWebsite = () => {
-  const [visitorToken, setVisitorToken] = useState(localStorage.getItem('visitorToken'));
-  const [name, setName] = useState('');
-  const [mobile, setMobile] = useState('');
-  const [loading, setLoading] = useState(false);
   const [contactConfig, setContactConfig] = useState({ phone: '+91 90031 81819', email: 'contact@vishnucreations.com' });
   const navigate = useNavigate();
 
@@ -41,22 +37,6 @@ const PublicWebsite = () => {
       if (res.data) setContactConfig(res.data);
     }).catch(() => { });
   }, []);
-
-  const handleVisitorEntry = async (e) => {
-    e.preventDefault();
-    if (!name || !mobile) return alert('Name and mobile number are required.');
-    setLoading(true);
-    try {
-      await axios.post(import.meta.env.VITE_API_URL + '/api/visitors', { name, mobileNumber: mobile });
-      localStorage.setItem('visitorToken', 'true');
-      localStorage.setItem('visitorName', name);
-      setVisitorToken('true');
-    } catch (err) {
-      alert("Error entering website.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleEnquirySubmit = async (e) => {
     e.preventDefault();
@@ -75,41 +55,7 @@ const PublicWebsite = () => {
     }
   };
 
-  if (!visitorToken) {
-    return (
-      <div className="min-h-screen bg-[#1a120c] flex items-center justify-center p-4 relative overflow-hidden font-inter">
-        {/* Abstract Background */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-leather-800/30 rounded-full blur-[100px] pointer-events-none -mr-48 -mt-48"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-leather-900/40 rounded-full blur-[80px] pointer-events-none -ml-32 -mb-32"></div>
 
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-8 md:p-12 rounded-3xl w-full max-w-md relative z-10 shadow-2xl">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-black text-white tracking-tight mb-2">Vishnu <span className="text-leather-400">Creations</span></h1>
-            <p className="text-leather-200">Please enter your details to access our exclusive catalog and portfolio.</p>
-          </div>
-
-          <form onSubmit={handleVisitorEntry} className="space-y-5">
-            <div>
-              <label className="block text-xs font-bold text-leather-300 uppercase tracking-wider mb-2">Full Name</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} required className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-leather-400 transition-colors" placeholder="John Doe" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-leather-300 uppercase tracking-wider mb-2">Mobile Number</label>
-              <input type="tel" value={mobile} onChange={e => setMobile(e.target.value)} required className="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-leather-400 transition-colors" placeholder="+91 9876543210" />
-            </div>
-            <button type="submit" disabled={loading} className="w-full bg-leather-600 hover:bg-leather-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg flex justify-center items-center gap-2 mt-2">
-              {loading ? 'Processing...' : 'Continue to Website'} <ArrowRight size={18} />
-            </button>
-          </form>
-
-          <div className="mt-8 text-center border-t border-white/10 pt-6">
-            <p className="text-gray-400 text-sm">Are you an employee or admin?</p>
-            <Link to="/login" className="inline-block mt-2 text-leather-400 hover:text-leather-300 font-bold transition-colors">Staff Login</Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 font-inter text-gray-800">
