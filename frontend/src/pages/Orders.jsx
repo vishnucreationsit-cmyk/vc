@@ -214,6 +214,12 @@ const Orders = () => {
     }
   };
 
+  const getImageUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    return `${import.meta.env.VITE_API_URL}${url}`;
+  };
+
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
@@ -311,7 +317,7 @@ const Orders = () => {
                         title="View Gallery"
                       >
                         {order.images && order.images.length > 0 ? (
-                          <img src={`${import.meta.env.VITE_API_URL}${order.images[0].imageUrl}`} alt="thumb" className="w-full h-full object-cover" />
+                          <img src={getImageUrl(order.images[0].imageUrl)} alt="thumb" className="w-full h-full object-cover" />
                         ) : (
                           <ImageIcon size={20} className="text-gray-400" />
                         )}
@@ -594,7 +600,7 @@ const Orders = () => {
                       {/* Main Viewer */}
                       <div className="flex-1 relative flex items-center justify-center mb-6 group/viewer">
                         <img 
-                          src={`${import.meta.env.VITE_API_URL}${images[galleryIndex].imageUrl}`} 
+                          src={getImageUrl(images[galleryIndex].imageUrl)} 
                           alt="Order" 
                           className="max-h-full max-w-full object-contain rounded-lg shadow-2xl"
                         />
@@ -643,7 +649,7 @@ const Orders = () => {
                             onClick={() => setGalleryIndex(idx)}
                             className={`flex-shrink-0 w-24 h-full rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${galleryIndex === idx ? 'border-leather-500 scale-105' : 'border-transparent opacity-60 hover:opacity-100'}`}
                           >
-                            <img src={`${import.meta.env.VITE_API_URL}${img.imageUrl}`} alt="thumb" className="w-full h-full object-cover" />
+                            <img src={getImageUrl(img.imageUrl)} alt="thumb" className="w-full h-full object-cover" />
                           </div>
                         ))}
                       </div>

@@ -13,13 +13,6 @@ const Login = () => {
   const [loginType, setLoginType] = useState('EMPLOYEE');
   const [loading, setLoading] = useState(false);
   
-  // OTP State for Admin
-  const [otpStep, setOtpStep] = useState(false);
-  const [otpCode, setOtpCode] = useState('');
-  const [adminUserId, setAdminUserId] = useState(null);
-  const [successMsg, setSuccessMsg] = useState('');
-  
-  
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -28,13 +21,11 @@ const Login = () => {
     try {
       setLoading(true);
       setError('');
-      setSuccessMsg('');
-
-      // Unified Login for both Employee and Admin
+      // Employee Password Login
       const response = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/login', { 
         username, 
         password,
-        loginType 
+        loginType: 'EMPLOYEE'
       });
       login(response.data);
       navigate('/dashboard');
@@ -105,23 +96,7 @@ const Login = () => {
             <p className="text-gray-500">Please enter your details to sign in.</p>
           </div>
 
-          {/* Role Switcher */}
-          <div className="flex bg-gray-100/80 p-1.5 rounded-xl mb-8 border border-gray-200/50">
-            <button
-              type="button"
-              onClick={() => { setLoginType('ADMIN'); setError(''); setSuccessMsg(''); setOtpStep(false); }}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold rounded-lg transition-all ${loginType === 'ADMIN' ? 'bg-white text-leather-800 shadow-md transform scale-[1.02]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'}`}
-            >
-              <Shield size={18} /> Admin
-            </button>
-            <button
-              type="button"
-              onClick={() => { setLoginType('EMPLOYEE'); setError(''); setSuccessMsg(''); setOtpStep(false); }}
-              className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-bold rounded-lg transition-all ${loginType === 'EMPLOYEE' ? 'bg-white text-leather-800 shadow-md transform scale-[1.02]' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'}`}
-            >
-              <User size={18} /> Employee
-            </button>
-          </div>
+          {/* Removed Role Switcher */}
 
           <AnimatePresence mode="wait">
             {error && (
@@ -130,26 +105,19 @@ const Login = () => {
                 {error}
               </motion.div>
             )}
-            {successMsg && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="bg-green-50 border border-green-100 text-green-700 p-4 rounded-xl text-sm mb-4 font-medium flex items-center gap-3">
-                <div className="bg-green-100 p-1.5 rounded-md"><span className="block w-2 h-2 rounded-full bg-green-500"></span></div>
-                {successMsg}
-              </motion.div>
-            )}
           </AnimatePresence>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
-                {loginType === 'ADMIN' ? 'Admin Username' : 'Employee ID'}
+                Employee ID
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder={loginType === 'ADMIN' ? "CH_SATISH" : "EMP001"}
-                disabled={otpStep}
-                className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:ring-4 focus:ring-leather-500/20 focus:border-leather-500 outline-none transition-all bg-white shadow-sm placeholder-gray-400 text-gray-800 font-medium disabled:bg-gray-50 disabled:text-gray-500"
+                placeholder="EMP001"
+                className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:ring-4 focus:ring-leather-500/20 focus:border-leather-500 outline-none transition-all bg-white shadow-sm placeholder-gray-400 text-gray-800 font-medium"
                 required
               />
             </div>
@@ -179,11 +147,11 @@ const Login = () => {
                 </button>
               </div>
             </div>
-
+            
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-leather-800 text-white font-black text-lg py-4 rounded-xl hover:bg-leather-900 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-xl mt-4 flex items-center justify-center gap-2 group"
+              className="w-full bg-leather-800 text-white font-black text-lg py-4 rounded-xl hover:bg-leather-900 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 disabled:opacity-70 mt-4 flex items-center justify-center gap-2 group"
             >
               {loading ? 'Processing...' : 'Sign In'}
               {!loading && <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />}
@@ -191,13 +159,13 @@ const Login = () => {
           </form>
 
           <div className="mt-12 pt-8 border-t border-gray-200/80 text-center">
-            <p className="text-gray-500 text-sm font-medium">Are you a visitor?</p>
+            <p className="text-gray-500 text-sm font-medium">Are you an administrator?</p>
             <button
               type="button"
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/admin')}
               className="mt-3 flex items-center justify-center gap-2 w-full py-3.5 border-2 border-gray-200 rounded-xl text-gray-700 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all"
             >
-              <Globe size={18} /> Go to Public Portal
+              <Shield size={18} /> Admin Gateway
             </button>
           </div>
         </div>

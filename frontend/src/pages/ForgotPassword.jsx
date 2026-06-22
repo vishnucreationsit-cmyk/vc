@@ -11,7 +11,7 @@ const ForgotPassword = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   
   // State for Step 1: Lookup
-  const [searchTerm, setSearchTerm] = useState('');
+  const [email, setEmail] = useState('');
   const [userData, setUserData] = useState(null);
   
   // State for Step 2: OTP
@@ -38,12 +38,12 @@ const ForgotPassword = () => {
     try {
       setLoading(true);
       setMessage({ type: '', text: '' });
-      const res = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/forgot-password/send-otp', { searchTerm });
+      const res = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/forgot-password/send-otp', { email });
       setUserData(res.data);
       setMessage({ type: 'success', text: res.data.message });
       setTimeout(() => { setMessage({ type: '', text: '' }); setStep(2); }, 2000);
     } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.error || 'Account not found or mobile not registered' });
+      setMessage({ type: 'error', text: err.response?.data?.error || 'Failed to send OTP. Please try again.' });
     } finally {
       setLoading(false);
     }
@@ -96,7 +96,7 @@ const ForgotPassword = () => {
       const res = await axios.post(import.meta.env.VITE_API_URL + '/api/auth/reset-password', { 
         resetToken, 
         newPassword,
-        method: 'MOBILE'
+        method: 'EMAIL'
       });
       setMessage({ type: 'success', text: res.data.message });
       setTimeout(() => navigate('/login'), 2500);
@@ -135,8 +135,8 @@ const ForgotPassword = () => {
             {step === 3 && "Reset Password"}
           </h2>
           <p className="text-gray-500 mt-2 text-sm">
-            {step === 1 && "Enter your Username, Mobile or Employee ID to receive an OTP."}
-            {step === 2 && userData && `We've sent a 6-digit code to your registered mobile: ${userData.maskedMobile}`}
+            {step === 1 && "Enter your registered email to receive an OTP."}
+            {step === 2 && userData && `If the email was found, a 6-digit code has been sent to ${userData.maskedEmail}`}
             {step === 3 && "Create a new strong password."}
           </p>
         </div>
@@ -153,18 +153,18 @@ const ForgotPassword = () => {
         {step === 1 && (
           <form onSubmit={handleLookupAndSendOtp} className="space-y-6">
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-1">Search Account</label>
+              <label className="block text-sm font-bold text-gray-700 mb-1">Registered Email</label>
               <input 
-                type="text" required value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
+                type="email" required value={email} onChange={e => setEmail(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-leather-500 focus:border-leather-500 outline-none transition-all"
-                placeholder="Username, Mobile or EMP ID"
+                placeholder="Enter your registered email address"
               />
             </div>
             <button 
-              type="submit" disabled={loading || !searchTerm}
+              type="submit" disabled={loading || !email}
               className="w-full py-3.5 px-4 bg-leather-800 hover:bg-leather-900 text-white font-bold rounded-xl shadow-md disabled:opacity-50 transition-all flex justify-center items-center gap-2"
             >
-              {loading ? 'Sending OTP...' : 'Send OTP via SMS'} <ArrowRight size={18} />
+              {loading ? 'Sending OTP...' : 'Send OTP to Email'} <ArrowRight size={18} />
             </button>
           </form>
         )}

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { format, parseISO } from 'date-fns';
 import { MapPin, Clock, CheckCircle, AlertTriangle, XCircle, LogOut, Filter, ChevronLeft, ChevronRight, Search, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
+import CheckInTokenModal from '../components/CheckInTokenModal';
 
 const Attendance = () => {
   const { user } = useAuth();
@@ -35,6 +36,10 @@ const Attendance = () => {
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  // OTP Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState('');
 
   const today = format(new Date(), 'yyyy-MM-dd');
 
@@ -85,7 +90,7 @@ const Attendance = () => {
 
   const fetchGeofenceConfig = async () => {
     try {
-      const res = await axios.get(import.meta.env.VITE_API_URL + '/api/attendance/geofence/config');
+      const res = await axios.get(import.meta.env.VITE_API_URL + '/api/geofence/config');
       setGeofenceConfig(res.data);
       setNewRadius(res.data.allowedRadiusMeters);
     } catch (err) {
@@ -95,7 +100,7 @@ const Attendance = () => {
 
   const handleUpdateGeofence = async () => {
     try {
-      await axios.post(import.meta.env.VITE_API_URL + '/api/attendance/geofence/config', {
+      await axios.post(import.meta.env.VITE_API_URL + '/api/geofence/config', {
         companyLat: geofenceConfig.companyLat,
         companyLng: geofenceConfig.companyLng,
         allowedRadiusMeters: newRadius
@@ -162,50 +167,56 @@ const Attendance = () => {
     }
   };
 
-  const handleCheckIn = async () => {
+  const triggerCheckIn = async () => {
     try {
       setActionLoading(true);
       setMessage({ type: '', text: '' });
       if (!currentLocation) {
         throw new Error(locationError || 'Waiting for GPS location...');
       }
-      const payload = {
-        employeeId: parseInt(user.employeeId), date: today, time: format(new Date(), 'HH:mm:ss'),
-        latitude: currentLocation.lat, longitude: currentLocation.lng
-      };
-      await axios.post(import.meta.env.VITE_API_URL + '/api/attendance/check-in', payload);
-      setMessage({ type: 'success', text: 'Attendance Marked Successfully' });
-      fetchDailyAttendance();
-      if (user?.role === 'EMPLOYEE') fetchMyHistory();
-      if (user?.role === 'ADMIN' || user?.role === 'MANAGER') fetchAllHistory();
+      // Request Token First
+      await axios.post(import.meta.env.VITE_API_URL + '/api/attendance/request-token', { employeeId: parseInt(user.employeeId) });
+      setModalType('CHECK_IN');
+      setIsModalOpen(true);
     } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.error || err.message || 'Failed to check in' });
+      setMessage({ type: 'error', text: err.response?.data?.message || err.message || 'Failed to request check-in token' });
     } finally {
       setActionLoading(false);
     }
   };
 
-  const handleCheckOut = async () => {
+  const triggerCheckOut = async () => {
     try {
       setActionLoading(true);
       setMessage({ type: '', text: '' });
       if (!currentLocation) {
         throw new Error(locationError || 'Waiting for GPS location...');
       }
-      const payload = { 
-        employeeId: parseInt(user.employeeId), date: today, time: format(new Date(), 'HH:mm:ss'),
-        latitude: currentLocation.lat, longitude: currentLocation.lng
-      };
-      await axios.post(import.meta.env.VITE_API_URL + '/api/attendance/check-out', payload);
-      setMessage({ type: 'success', text: 'Check Out Marked Successfully' });
-      fetchDailyAttendance();
-      if (user?.role === 'EMPLOYEE') fetchMyHistory();
-      if (user?.role === 'ADMIN' || user?.role === 'MANAGER') fetchAllHistory();
+      // Request Token First
+      await axios.post(import.meta.env.VITE_API_URL + '/api/attendance/request-token', { employeeId: parseInt(user.employeeId) });
+      setModalType('CHECK_OUT');
+      setIsModalOpen(true);
     } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.error || err.message || 'Failed to check out' });
+      setMessage({ type: 'error', text: err.response?.data?.message || err.message || 'Failed to request check-out token' });
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const submitToken = async (token, type) => {
+    const endpoint = type === 'CHECK_IN' ? '/api/attendance/check-in' : '/api/attendance/check-out';
+    const payload = {
+        employeeId: parseInt(user.employeeId), date: today, time: format(new Date(), 'HH:mm:ss'),
+        latitude: currentLocation.lat, longitude: currentLocation.lng,
+        token: token
+    };
+    
+    // Send token to endpoint
+    await axios.post(import.meta.env.VITE_API_URL + endpoint, payload);
+    setMessage({ type: 'success', text: `Attendance ${type === 'CHECK_IN' ? 'Check-In' : 'Check-Out'} Successful!` });
+    fetchDailyAttendance();
+    if (user?.role === 'EMPLOYEE') fetchMyHistory();
+    if (user?.role === 'ADMIN' || user?.role === 'MANAGER') fetchAllHistory();
   };
 
   const getStatusBadge = (status) => {
@@ -323,7 +334,7 @@ const Attendance = () => {
             <h3 className="text-lg font-bold text-gray-800 mb-1">Check In</h3>
             <p className="text-sm text-gray-500 mb-6">Shift starts at 09:00 AM</p>
             <button
-              onClick={handleCheckIn} disabled={actionLoading || todayRecord?.checkInTime}
+              onClick={triggerCheckIn} disabled={actionLoading || todayRecord?.checkInTime}
               className={`w-full py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors ${todayRecord?.checkInTime ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-leather-600 text-white hover:bg-leather-700 shadow-md'}`}
             >
               <MapPin size={18} />
@@ -338,7 +349,7 @@ const Attendance = () => {
             <h3 className="text-lg font-bold text-gray-800 mb-1">Check Out</h3>
             <p className="text-sm text-gray-500 mb-6">Shift ends at 06:00 PM</p>
             <button
-              onClick={handleCheckOut} disabled={actionLoading || !todayRecord?.checkInTime || todayRecord?.checkOutTime}
+              onClick={triggerCheckOut} disabled={actionLoading || !todayRecord?.checkInTime || todayRecord?.checkOutTime}
               className={`w-full py-3 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors ${!todayRecord?.checkInTime || todayRecord?.checkOutTime ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-800 text-white hover:bg-gray-900 shadow-md'}`}
             >
               <LogOut size={18} />
@@ -619,6 +630,14 @@ const Attendance = () => {
           </div>
         </div>
       )}
+
+      {/* OTP Token Verification Modal */}
+      <CheckInTokenModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={submitToken}
+        type={modalType}
+      />
 
     </div>
   );

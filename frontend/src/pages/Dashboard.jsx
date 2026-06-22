@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { format } from 'date-fns';
-import { Package, CheckCircle, TrendingUp, Users, ChevronLeft, ChevronRight, X, Phone, Mail, MapPin, Award, ShieldCheck, Clock, Zap, Leaf, Globe, Briefcase, Calendar, LogOut, UserX } from 'lucide-react';
+import { Package, CheckCircle, TrendingUp, Users, ChevronLeft, ChevronRight, X, Phone, Mail, MapPin, Award, ShieldCheck, Clock, Zap, Leaf, Globe, Briefcase, Calendar, LogOut, UserX, Image as ImageIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -84,6 +84,12 @@ const Dashboard = () => {
   };
 
   const fadeIn = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } };
+
+  const getImageUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('http')) return url;
+    return `${import.meta.env.VITE_API_URL}${url}`;
+  };
 
   return (
     <div className="space-y-12 pb-12 overflow-x-hidden">
@@ -297,12 +303,12 @@ const Dashboard = () => {
 
               {/* Display the first uploaded image, or a placeholder */}
               <div
-                onClick={() => order.images && order.images.length > 0 ? openLightbox(0, order.images.map(img => import.meta.env.VITE_API_URL + '' + img.imageUrl)) : null}
+                onClick={() => order.images && order.images.length > 0 ? openLightbox(0, order.images.map(img => getImageUrl(img.imageUrl))) : null}
                 className="w-full md:w-64 h-56 bg-white rounded-lg shadow-sm border border-green-100 overflow-hidden relative cursor-pointer group flex items-center justify-center"
               >
                 {order.images && order.images.length > 0 ? (
                   <>
-                    <img src={`${import.meta.env.VITE_API_URL}${order.images[0].imageUrl}`} alt={order.productName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <img src={getImageUrl(order.images[0].imageUrl)} alt={order.productName} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Package className="text-white mb-2" size={32} />
                       <span className="text-white font-bold bg-black/60 px-4 py-2 rounded-full">View Gallery ({order.images.length})</span>

@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
+import AdminLogin from './pages/AdminLogin';
 import Layout from './components/Layout';
 import Attendance from './pages/Attendance';
 import Employees from './pages/Employees';
@@ -28,6 +29,7 @@ function AppRoutes() {
       {/* Public Routes */}
       <Route path="/" element={<PublicWebsite />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/admin" element={<AdminLogin />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       
       {/* Protected Routes */}
